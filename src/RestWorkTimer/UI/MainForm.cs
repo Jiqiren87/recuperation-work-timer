@@ -175,6 +175,8 @@ public sealed class MainForm : Form
 
     public bool AllowClose { get; set; }
 
+    public event EventHandler? UserHidden;
+
     public void RefreshView()
     {
         if (IsDisposed)
@@ -228,6 +230,7 @@ public sealed class MainForm : Form
         {
             e.Cancel = true;
             Hide();
+            UserHidden?.Invoke(this, EventArgs.Empty);
             return;
         }
 

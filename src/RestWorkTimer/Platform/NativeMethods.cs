@@ -23,6 +23,9 @@ internal static class NativeMethods
 
     public const uint NOTIFY_FOR_THIS_SESSION = 0;
 
+    public const int SW_SHOW = 5;
+    public const int SW_RESTORE = 9;
+
     [UnmanagedFunctionPointer(CallingConvention.Winapi)]
     public delegate IntPtr HookProc(int nCode, IntPtr wParam, IntPtr lParam);
 
@@ -57,6 +60,14 @@ internal static class NativeMethods
     [DllImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool DestroyIcon(IntPtr hIcon);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool IsWindowVisible(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
     [StructLayout(LayoutKind.Sequential)]
     public struct POINT

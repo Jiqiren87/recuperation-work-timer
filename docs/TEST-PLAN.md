@@ -55,13 +55,17 @@ GitHub Actions 的 `ci` workflow 在 `windows-latest` 上执行 restore/build/te
 - [x] 主窗口/托盘/设置/历史窗口可创建，150% DPI 布局已截图
 - [x] 输入钩子注册成功（日志 `inputHook=true`）
 - [x] 会话/电源通知注册成功（日志 `sessionMonitor=true`）
-- [x] 2 分钟周期：01:00、00:30 提醒；00:00 进入 Rest（`lockOnRest=false` 测试）
-- [x] 本地 work 记录写入 JSONL
-- [ ] 真实锁屏/解锁/休息确认框（需要解锁桌面）
-- [ ] `powercfg /requests` 防休眠（需要管理员）
-- [ ] 注入输入真机验证（需要解锁桌面）
-- [ ] 睡眠/休眠回归
-- [ ] 开机自启回归
+- [x] 2 分钟周期：01:00、00:30 提醒；00:00 进入 Rest（`lockOnRest=true` 真机锁屏）
+- [x] 本地 work + rest 记录写入 JSONL
+- [x] 真实锁屏/解锁/休息确认框
+- [x] 注入输入真机验证（物理输入启动，`SendInput` 不启动）
+- [x] 工作锁屏清零
+- [x] 睡眠/恢复（观察到锁屏 + suspend/resume，解锁后 Idle）
+- [x] 开机自启注册
+- [x] 单实例
+- [ ] `powercfg /requests` 防休眠（需要管理员，未执行）
+- [ ] “继续休息（立即锁屏）”单独回归
+- [ ] 纯 Working→睡眠（未先锁屏）隔离回归
 
 截图与日志时间点见 [ACCEPTANCE.md](ACCEPTANCE.md)。
 

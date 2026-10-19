@@ -34,6 +34,8 @@ public sealed class TrayApp : ApplicationContext
     private RestReleaseForm? _restReleaseForm;
     private bool _restReleaseOpen;
     private bool _exiting;
+    private bool _sessionLocked;
+    private bool _mainOpen;
     private string _todaySummary = "今日：还没有工作记录";
 
     public TrayApp(ConfigStore configStore, AppConfig config, bool startHidden)
@@ -65,6 +67,7 @@ public sealed class TrayApp : ApplicationContext
         _menu.Opening += (_, _) => UpdateMenu();
 
         _main = new MainForm(this);
+        _main.UserHidden += (_, _) => _mainOpen = false;
 
         _input = new InputMonitor();
         _input.HumanInputDetected += OnHumanInput;
@@ -191,9 +194,17 @@ public sealed class TrayApp : ApplicationContext
             return;
         }
 
+        _mainOpen = true;
         if (!_main.Visible)
         {
             _main.Show();
+        }
+
+        // Windows can hide top-level windows when the session locks without
+        // updating WinForms' Visible property. Force the native window visible.
+        if (!NativeMethods.IsWindowVisible(_main.Handle))
+        {
+            NativeMethods.ShowWindow(_main.Handle, NativeMethods.SW_SHOW);
         }
 
         if (_main.WindowState == FormWindowState.Minimized)
@@ -424,7 +435,7 @@ public sealed class TrayApp : ApplicationContext
 
     private void OnHumanInput(object? sender, EventArgs e)
     {
-        if (_exiting)
+        if (_exiting || _sessionLocked)
         {
             return;
         }
@@ -552,6 +563,7 @@ public sealed class TrayApp : ApplicationContext
     private void OnSessionLocked(object? sender, EventArgs e)
     {
         AppLog.Info("session.lock", new { state = _engine.State.ToString() });
+        _sessionLocked = true;
 
         _unlockDelayTimer.Stop();
         if (_restReleaseForm is { IsDisposed: false })
@@ -572,6 +584,7 @@ public sealed class TrayApp : ApplicationContext
     private void OnSessionUnlocked(object? sender, EventArgs e)
     {
         AppLog.Info("session.unlock", new { state = _engine.State.ToString() });
+        _sessionLocked = false;
 
         // If the lock notification was missed, do not let a stale cycle continue.
         if (_engine.State == TimerState.Working)
@@ -583,6 +596,10 @@ public sealed class TrayApp : ApplicationContext
         {
             _unlockDelayTimer.Stop();
             _unlockDelayTimer.Start();
+        }
+        else if (_mainOpen)
+        {
+            ShowMain();
         }
 
         UpdateUi();
@@ -621,6 +638,10 @@ public sealed class TrayApp : ApplicationContext
                 NativeMethods.LockWorkStation();
             }
         }
+        else if (_mainOpen)
+        {
+            ShowMain();
+        }
 
         UpdateUi();
     }
@@ -656,6 +677,7 @@ public sealed class TrayApp : ApplicationContext
             if (result == DialogResult.OK)
             {
                 _engine.ReleaseRest("manual");
+                AppLog.Info("cycle.start", new { reason = "after-rest" });
                 _keepAwake.Disable();
                 RefreshTodaySummary();
                 UpdateUi();
@@ -680,6 +702,7 @@ public sealed class TrayApp : ApplicationContext
         }
 
         _engine.ReleaseRest("manual");
+        AppLog.Info("cycle.start", new { reason = "after-rest" });
         _keepAwake.Disable();
         RefreshTodaySummary();
         UpdateUi();
