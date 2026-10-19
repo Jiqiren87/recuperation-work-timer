@@ -685,8 +685,9 @@ public sealed class TrayApp : ApplicationContext
             var worked = snapshot.CycleStartedAt is { } startedAt && snapshot.RestStartedAt is { } restStartedAt
                 ? restStartedAt - startedAt
                 : _config.WorkDuration;
+            var minimumRemaining = GetMinimumRestRemaining(snapshot.RestStartedAt);
 
-            using var form = new RestReleaseForm(worked);
+            using var form = new RestReleaseForm(worked, minimumRemaining);
             _restReleaseForm = form;
             DialogResult result;
             try
@@ -700,6 +701,12 @@ public sealed class TrayApp : ApplicationContext
 
             if (result == DialogResult.OK)
             {
+                if (GetMinimumRestRemaining(snapshot.RestStartedAt) > TimeSpan.Zero)
+                {
+                    Relock();
+                    return;
+                }
+
                 _engine.ReleaseRest("manual");
                 AppLog.Info("cycle.start", new { reason = "after-rest" });
                 _keepAwake.Disable();
@@ -725,12 +732,30 @@ public sealed class TrayApp : ApplicationContext
             return;
         }
 
+        var remaining = GetMinimumRestRemaining(_engine.Snapshot.RestStartedAt);
+        if (remaining > TimeSpan.Zero)
+        {
+            MessageBox.Show(_main,
+                $"最少休息时间未到，还需 {FormatRemaining(remaining)}。\n\n程序会重新锁屏。",
+                "休息未满",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+            Relock();
+            return;
+        }
+
         _engine.ReleaseRest("manual");
         AppLog.Info("cycle.start", new { reason = "after-rest" });
         _keepAwake.Disable();
         RefreshTodaySummary();
         UpdateUi();
         ShowMain();
+    }
+
+    private static string FormatRemaining(TimeSpan remaining)
+    {
+        var totalMinutes = (int)Math.Floor(remaining.TotalMinutes);
+        return $"{totalMinutes:00}:{remaining.Seconds:00}";
     }
 
     private void Relock()
@@ -796,6 +821,18 @@ public sealed class TrayApp : ApplicationContext
         RefreshTodaySummary();
         UpdateUi();
         _main.RefreshView();
+    }
+
+    private TimeSpan GetMinimumRestRemaining(DateTimeOffset? restStartedAt)
+    {
+        if (_config.MinRestMinutes <= 0 || restStartedAt is null)
+        {
+            return TimeSpan.Zero;
+        }
+
+        var elapsed = DateTimeOffset.Now - restStartedAt.Value;
+        var remaining = TimeSpan.FromMinutes(_config.MinRestMinutes) - elapsed;
+        return remaining > TimeSpan.Zero ? remaining : TimeSpan.Zero;
     }
 
     private void RefreshTodaySummary()

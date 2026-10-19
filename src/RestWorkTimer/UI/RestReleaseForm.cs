@@ -2,13 +2,21 @@ namespace RestWorkTimer.UI;
 
 public sealed class RestReleaseForm : Form
 {
+    private readonly Label _title;
+    private readonly Label _body;
     private readonly Label _countdownLabel;
+    private readonly Button _release;
     private readonly System.Windows.Forms.Timer _countdownTimer;
     private readonly FlowLayoutPanel _buttonsPanel;
+    private TimeSpan _minimumRemaining;
     private int _secondsLeft = 15;
 
-    public RestReleaseForm(TimeSpan worked)
+    public RestReleaseForm(TimeSpan worked, TimeSpan minimumRemaining = default)
     {
+        _minimumRemaining = minimumRemaining > TimeSpan.Zero
+            ? minimumRemaining
+            : TimeSpan.Zero;
+
         Text = "休息中";
         FormBorderStyle = FormBorderStyle.FixedDialog;
         StartPosition = FormStartPosition.CenterScreen;
@@ -23,9 +31,8 @@ public sealed class RestReleaseForm : Form
         BackColor = Theme.Background;
         Padding = new Padding(26);
 
-        var title = new Label
+        _title = new Label
         {
-            Text = "休息中 · 自动化仍在运行",
             Font = Theme.Ui(16f, FontStyle.Bold),
             ForeColor = Theme.Text,
             Dock = DockStyle.Top,
@@ -33,11 +40,8 @@ public sealed class RestReleaseForm : Form
             TextAlign = ContentAlignment.MiddleLeft
         };
 
-        var body = new Label
+        _body = new Label
         {
-            Text = $"本次工作已完成 {FormatDuration(worked)}。\n\n" +
-                   "系统已经锁屏；解锁后必须手动确认才会开始新的工作周期。\n" +
-                   "不操作会自动重新锁屏。",
             Font = Theme.Ui(10f),
             ForeColor = Theme.Muted,
             Dock = DockStyle.Top,
@@ -66,14 +70,19 @@ public sealed class RestReleaseForm : Form
         };
         _buttonsPanel = buttons;
 
-        var release = new Button
+        _release = new Button
         {
             Text = "结束休息，开始新的工作周期",
             Width = 250
         };
-        Theme.StylePrimary(release);
-        release.Click += (_, _) =>
+        Theme.StylePrimary(_release);
+        _release.Click += (_, _) =>
         {
+            if (_minimumRemaining > TimeSpan.Zero)
+            {
+                return;
+            }
+
             DialogResult = DialogResult.OK;
             Close();
         };
@@ -90,13 +99,13 @@ public sealed class RestReleaseForm : Form
             Close();
         };
 
-        buttons.Controls.Add(release);
+        buttons.Controls.Add(_release);
         buttons.Controls.Add(keepResting);
 
         Controls.Add(buttons);
         Controls.Add(_countdownLabel);
-        Controls.Add(body);
-        Controls.Add(title);
+        Controls.Add(_body);
+        Controls.Add(_title);
 
         KeyPreview = true;
         KeyDown += (_, e) =>
@@ -112,6 +121,17 @@ public sealed class RestReleaseForm : Form
         _countdownTimer.Tick += (_, _) =>
         {
             _secondsLeft--;
+            if (_minimumRemaining > TimeSpan.Zero)
+            {
+                _minimumRemaining -= TimeSpan.FromSeconds(1);
+                if (_minimumRemaining < TimeSpan.Zero)
+                {
+                    _minimumRemaining = TimeSpan.Zero;
+                }
+            }
+
+            UpdateReleaseState(worked);
+
             if (_secondsLeft <= 0)
             {
                 _countdownTimer.Stop();
@@ -122,6 +142,8 @@ public sealed class RestReleaseForm : Form
 
             _countdownLabel.Text = $"{_secondsLeft} 秒后重新锁屏";
         };
+
+        UpdateReleaseState(worked);
     }
 
     protected override void OnShown(EventArgs e)
@@ -144,6 +166,35 @@ public sealed class RestReleaseForm : Form
         _countdownTimer.Stop();
         _countdownTimer.Dispose();
         base.OnFormClosed(e);
+    }
+
+    private void UpdateReleaseState(TimeSpan worked)
+    {
+        if (_minimumRemaining > TimeSpan.Zero)
+        {
+            _title.Text = "休息未满 · 还需 " + FormatRemaining(_minimumRemaining);
+            _body.Text = $"本次工作已完成 {FormatDuration(worked)}。\n\n" +
+                         "最少休息时间未到，时间到后才能结束休息。\n" +
+                         "不操作会自动重新锁屏。";
+            _release.Text = "休息未满（还需 " + FormatRemaining(_minimumRemaining) + "）";
+            _release.Enabled = false;
+            _release.BackColor = Color.FromArgb(107, 114, 128);
+            return;
+        }
+
+        _title.Text = "休息中 · 自动化仍在运行";
+        _body.Text = $"本次工作已完成 {FormatDuration(worked)}。\n\n" +
+                     "系统已经锁屏；解锁后必须手动确认才会开始新的工作周期。\n" +
+                     "不操作会自动重新锁屏。";
+        _release.Text = "结束休息，开始新的工作周期";
+        _release.Enabled = true;
+        _release.BackColor = Theme.Accent;
+    }
+
+    private static string FormatRemaining(TimeSpan remaining)
+    {
+        var totalMinutes = (int)Math.Floor(remaining.TotalMinutes);
+        return $"{totalMinutes:00}:{remaining.Seconds:00}";
     }
 
     private static string FormatDuration(TimeSpan duration)

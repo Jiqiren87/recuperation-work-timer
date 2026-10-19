@@ -65,6 +65,7 @@ GitHub Actions 的 `ci` workflow 在 `windows-latest` 上执行 restore/build/te
 - [x] 单实例
 - [x] v0.1.1 全屏提醒：全屏游戏上显示，`forceForeground=true`，窗口被最小化后提醒可见
 - [x] v0.1.2 仅托盘：`--autostart` 启动无主窗口；手动启动主窗口无任务栏按钮；关闭回托盘
+- [x] v0.1.3 最少休息：休息未满时解锁显示剩余时间、结束按钮禁用；托盘菜单不能绕过
 - [ ] `powercfg /requests` 防休眠（需要管理员，未执行）
 - [ ] “继续休息（立即锁屏）”单独回归
 - [ ] 纯 Working→睡眠（未先锁屏）隔离回归

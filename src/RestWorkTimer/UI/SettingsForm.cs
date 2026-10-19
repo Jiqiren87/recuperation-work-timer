@@ -12,6 +12,7 @@ public sealed class SettingsForm : Form
     private readonly CheckBox _breakThrough;
     private readonly CheckBox _lock;
     private readonly CheckBox _keepAwake;
+    private readonly NumericUpDown _minRest;
     private readonly CheckBox _autoStart;
     private readonly NumericUpDown _retention;
 
@@ -25,7 +26,7 @@ public sealed class SettingsForm : Form
         MaximizeBox = false;
         AutoScaleDimensions = new SizeF(96F, 96F);
         AutoScaleMode = AutoScaleMode.Dpi;
-        ClientSize = new Size(600, 560);
+        ClientSize = new Size(600, 600);
         BackColor = Theme.Background;
         Font = Theme.Ui(9.5f);
 
@@ -34,18 +35,24 @@ public sealed class SettingsForm : Form
             Dock = DockStyle.Fill,
             Padding = new Padding(22, 18, 22, 16),
             ColumnCount = 2,
-            RowCount = 12,
+            RowCount = 13,
             BackColor = Theme.Background
         };
         root.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 52));
         root.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 48));
-        for (var i = 0; i < 9; i++)
-        {
-            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 38));
-        }
-        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 42));
-        root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 52));
+        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 38)); // 0 heading
+        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 38)); // 1 work
+        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 38)); // 2 warn 60
+        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 38)); // 3 warn 30
+        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 38)); // 4 sound
+        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 64)); // 5 popup + breakthrough
+        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 38)); // 6 lock
+        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 38)); // 7 keep awake
+        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 42)); // 8 min rest
+        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 38)); // 9 autostart
+        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 42)); // 10 retention
+        root.RowStyles.Add(new RowStyle(SizeType.Percent, 100)); // 11 note
+        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 52)); // 12 buttons
 
         var heading = new Label
         {
@@ -120,7 +127,6 @@ public sealed class SettingsForm : Form
         popupPanel.Controls.Add(_popup);
         popupPanel.Controls.Add(_breakThrough);
         AddRow(root, string.Empty, popupPanel, 5);
-        root.RowStyles[5].Height = 64;
 
         _lock = new CheckBox
         {
@@ -138,13 +144,24 @@ public sealed class SettingsForm : Form
         };
         AddRow(root, string.Empty, _keepAwake, 7);
 
+        _minRest = new NumericUpDown
+        {
+            Minimum = 0,
+            Maximum = 180,
+            Value = Math.Clamp(current.MinRestMinutes, 0, 180),
+            Dock = DockStyle.Left,
+            Width = 110,
+            Font = Theme.Ui(10f)
+        };
+        AddRow(root, "最少锁屏休息（分钟）", _minRest, 8);
+
         _autoStart = new CheckBox
         {
             Text = "登录 Windows 后自动启动",
             Checked = autoStartEnabled,
             AutoSize = true
         };
-        AddRow(root, "启动", _autoStart, 8);
+        AddRow(root, "启动", _autoStart, 9);
 
         _retention = new NumericUpDown
         {
@@ -155,20 +172,20 @@ public sealed class SettingsForm : Form
             Width = 110,
             Font = Theme.Ui(10f)
         };
-        AddRow(root, "本地记录保留（天）", _retention, 9);
+        AddRow(root, "本地记录保留（天）", _retention, 10);
 
         var note = new Label
         {
-            Text = "提示：工作时长和提醒修改在下一个工作周期生效；" +
+            Text = "提示：工作时长、提醒和最少休息时间在下一个工作周期生效；" +
                    "需要立即应用，可在主窗口点“重置计时”。\n" +
-                   "至少保留一个提醒。关闭 60 秒提醒后，只保留 30 秒提醒。",
+                   "至少保留一个提醒。最少休息 0 表示不限制解除时间。",
             Font = Theme.Ui(8.5f),
             ForeColor = Theme.Muted,
             Dock = DockStyle.Fill,
             TextAlign = ContentAlignment.MiddleLeft,
             AutoEllipsis = true
         };
-        root.Controls.Add(note, 0, 10);
+        root.Controls.Add(note, 0, 11);
         root.SetColumnSpan(note, 2);
 
         var buttons = new FlowLayoutPanel
@@ -188,7 +205,7 @@ public sealed class SettingsForm : Form
 
         buttons.Controls.Add(save);
         buttons.Controls.Add(cancel);
-        root.Controls.Add(buttons, 0, 11);
+        root.Controls.Add(buttons, 0, 12);
         root.SetColumnSpan(buttons, 2);
 
         Controls.Add(root);
@@ -204,7 +221,7 @@ public sealed class SettingsForm : Form
     protected override void OnShown(EventArgs e)
     {
         base.OnShown(e);
-        Theme.ApplyDesignSize(this, 600, 560);
+        Theme.ApplyDesignSize(this, 600, 600);
     }
 
     private static void AddRow(TableLayoutPanel root, string labelText, Control control, int row)
@@ -261,6 +278,7 @@ public sealed class SettingsForm : Form
             BreakThroughFullscreen = _breakThrough.Checked,
             LockOnRest = _lock.Checked,
             KeepAwakeDuringRest = _keepAwake.Checked,
+            MinRestMinutes = (int)_minRest.Value,
             AutoStart = _autoStart.Checked,
             HistoryRetentionDays = (int)_retention.Value,
             LocalRecords = true,

@@ -8,6 +8,7 @@ public sealed class AppConfig
     public int IdleResetMinutes { get; set; } = 0;
     public bool LockOnRest { get; set; } = true;
     public bool KeepAwakeDuringRest { get; set; } = true;
+    public int MinRestMinutes { get; set; } = 5;
     public string RestMode { get; set; } = "lock";
     public bool RestReleaseRequiresConfirm { get; set; } = true;
     public bool AutoStart { get; set; } = true;
@@ -45,6 +46,7 @@ public sealed class AppConfig
 
         HistoryRetentionDays = Math.Clamp(HistoryRetentionDays, 1, 3650);
         IdleResetMinutes = Math.Clamp(IdleResetMinutes, 0, 240);
+        MinRestMinutes = Math.Clamp(MinRestMinutes, 0, 180);
 
         if (!string.Equals(RestMode, "lock", StringComparison.OrdinalIgnoreCase))
         {
