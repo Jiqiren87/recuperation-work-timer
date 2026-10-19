@@ -201,7 +201,9 @@ public sealed class MainForm : Form
             case TimerState.Rest:
                 _timeLabel.Text = "00:00";
                 _timeLabel.ForeColor = Theme.Rest;
-                _stateLabel.Text = "休息中 · 已锁屏，自动化仍在运行";
+                _stateLabel.Text = _app.Config.LockOnRest
+                    ? "休息中 · 已锁屏，自动化仍在运行"
+                    : "休息中 · 自动化仍在运行";
                 _resetButton.Text = "休息中";
                 _resetButton.Enabled = false;
                 _restButton.Enabled = false;

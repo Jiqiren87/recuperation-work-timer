@@ -383,9 +383,7 @@ public sealed class TrayApp : ApplicationContext
         _restItem.Enabled = state == TimerState.Working;
         _releaseItem.Visible = state == TimerState.Rest;
         _releaseItem.Enabled = state == TimerState.Rest;
-    }
-
-    private void UpdateUi()
+    }    private void UpdateUi()
     {
         if (_exiting)
         {
@@ -408,12 +406,12 @@ public sealed class TrayApp : ApplicationContext
         }
     }
 
-    private static string TrayText(TimerSnapshot snapshot)
+    private string TrayText(TimerSnapshot snapshot)
     {
         return snapshot.State switch
         {
             TimerState.Working => $"工作中 {Format(snapshot.Remaining)}",
-            TimerState.Rest => "休息中（已锁屏）",
+            TimerState.Rest => _config.LockOnRest ? "休息中（已锁屏）" : "休息中",
             _ => "待开始"
         };
     }
@@ -705,7 +703,15 @@ public sealed class TrayApp : ApplicationContext
         _config = config;
         _configStore.Save(config);
         _engine.UpdateSchedule(config.WorkDuration, config.GetWarnSeconds());
-        _history.PurgeOlderThan(config.HistoryRetentionDays);
+
+        try
+        {
+            _history.PurgeOlderThan(config.HistoryRetentionDays);
+        }
+        catch (Exception ex)
+        {
+            AppLog.Error("history.purge", ex);
+        }
 
         try
         {
