@@ -18,6 +18,7 @@ public sealed class MainForm : Form
     {
         _app = app;
         Text = "休养期间工作计时提醒期";
+        ShowInTaskbar = false;
         StartPosition = FormStartPosition.CenterScreen;
         FormBorderStyle = FormBorderStyle.FixedSingle;
         MaximizeBox = false;

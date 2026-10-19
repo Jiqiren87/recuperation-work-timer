@@ -13,6 +13,7 @@ public sealed class HistoryForm : Form
     {
         _store = store;
         Text = "工作 / 休息记录";
+        ShowInTaskbar = false;
         StartPosition = FormStartPosition.CenterParent;
         FormBorderStyle = FormBorderStyle.Sizable;
         MinimizeBox = false;

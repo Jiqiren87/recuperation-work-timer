@@ -12,7 +12,7 @@ public sealed class RestReleaseForm : Form
         Text = "休息中";
         FormBorderStyle = FormBorderStyle.FixedDialog;
         StartPosition = FormStartPosition.CenterScreen;
-        ShowInTaskbar = true;
+        ShowInTaskbar = false;
         TopMost = true;
         ControlBox = false;
         MinimizeBox = false;

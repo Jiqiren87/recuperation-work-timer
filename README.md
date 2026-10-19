@@ -4,9 +4,9 @@
 
 Windows 托盘工具：每次真正开始工作时启动 30 分钟倒计时，提前 60 秒 / 30 秒提醒，归零后锁屏进入休息；休息期间不结束后台自动化，并阻止系统空闲睡眠。解锁后必须手动确认才解除休息。
 
-> 状态：v0.1.1 **已发布**；25 个单元测试、CI 与真机核心链路验收通过。
+> 状态：v0.1.2 **已发布**；25 个单元测试、CI 与真机核心链路验收通过。
 >
-> 下载：<https://github.com/Jiqiren87/recuperation-work-timer/releases/tag/v0.1.1>
+> 下载：<https://github.com/Jiqiren87/recuperation-work-timer/releases/tag/v0.1.2>
 
 ![主窗口](docs/images/main.png)
 
@@ -22,6 +22,7 @@ Windows 托盘工具：每次真正开始工作时启动 30 分钟倒计时，�
 - 工作途中系统锁屏、睡眠、休眠：倒计时清零，下次解锁并产生真实输入后重新开始。
 - 低级键鼠钩子过滤 `LLKHF_INJECTED` / `LLMHF_INJECTED`，自动化模拟输入不算工作。
 - 工作/休息记录只写本机 `%APPDATA%\RestWorkTimer\sessions.jsonl`，可查看和导出 CSV，不上传网络。
+- 自动启动后只保留托盘图标；主窗口、历史记录和休息确认框不在任务栏显示。双击托盘打开主窗口，关闭后回到托盘。
 
 ## 限制
 
