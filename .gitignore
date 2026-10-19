@@ -1,0 +1,30 @@
+# Build output
+bin/
+obj/
+artifacts/
+TestResults/
+*.trx
+
+# Local toolchain and tools
+.dotnet/
+tools/gh/
+gh-login.log
+build.log
+test.log
+*.log
+
+# IDE
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# OS
+Thumbs.db
+Desktop.ini
+
+# Local runtime data (never committed)
+*.jsonl
+sessions.jsonl
