@@ -4,7 +4,9 @@
 
 Windows 托盘工具：每次真正开始工作时启动 30 分钟倒计时，提前 60 秒 / 30 秒提醒，归零后锁屏进入休息；休息期间不结束后台自动化，并阻止系统空闲睡眠。解锁后必须手动确认才解除休息。
 
-> 状态：M0–M2 代码完成，25 个单元测试与 CI 通过；v0.1.0 待完成真实锁屏/解锁验收。
+> 状态：v0.1.0 **预发布**；25 个单元测试与 CI 通过，真实锁屏/解锁验收待完成。
+>
+> 下载：<https://github.com/Jiqiren87/recuperation-work-timer/releases/tag/v0.1.0>
 
 ![主窗口](docs/images/main.png)
 
@@ -79,4 +81,4 @@ dotnet run --project src\RestWorkTimer
 - 测试计划：[docs/TEST-PLAN.md](docs/TEST-PLAN.md)
 - 验收记录：[docs/ACCEPTANCE.md](docs/ACCEPTANCE.md)
 - CI：GitHub Actions `ci` workflow（Windows，build + test + publish）
-- 版本：v0.1.0（锁屏/解锁真机验收完成后发布）
+- 版本：v0.1.0 预发布（<https://github.com/Jiqiren87/recuperation-work-timer/releases/tag/v0.1.0>）

@@ -1,4 +1,4 @@
-# 验收记录 — v0.1.0（开发中）
+# 验收记录 — v0.1.0（预发布）
 
 日期：2026-10-19
 环境：Windows 11 26200 / .NET 8.0.24 Desktop Runtime / 2560×1600 @ 150% DPI
@@ -10,8 +10,8 @@
 | 项目 | 结果 |
 |---|---|
 | `dotnet test`（25 个用例） | 通过 |
-| GitHub Actions `ci` | build / test / publish 通过 |
-| 发布单文件 exe | `artifacts/publish/RestWorkTimer.exe` 可启动 |
+| GitHub Actions `ci` | build / test / publish 通过（[run 39199912480](https://github.com/Jiqiren87/recuperation-work-timer/actions/runs/39199912480)） |
+| 发布单文件 exe | [v0.1.0 预发布](https://github.com/Jiqiren87/recuperation-work-timer/releases/tag/v0.1.0) 可下载；本机与 CI 产物均可启动 |
 
 ## 2. 已完成的本机验证
 
