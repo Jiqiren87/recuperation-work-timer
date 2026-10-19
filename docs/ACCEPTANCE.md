@@ -24,6 +24,8 @@
 | 归零 | 00:00 进入 Rest；`WorkCycleEnded` 记录 `reason=Rest`、`workedSeconds=120` |
 | 本地记录 | `sessions.jsonl` 写入 work 记录；JSONL 内容不含键值/窗口标题 |
 | 防休眠调用 | `SetThreadExecutionState` 返回成功（日志 `keepAwake=true`） |
+| 自启注册 | 启动安装版后写入 `HKCU\...\Run\RestWorkTimer`，值为安装路径 + `--autostart` |
+| 单实例 | 第二个进程显示“已在运行”，首个实例保持运行 |
 | 高 DPI UI | 150% 缩放下主窗口、设置页、历史页布局正常（截图见下） |
 
 日志时间点（本机测试）：
