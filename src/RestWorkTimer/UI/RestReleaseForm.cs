@@ -19,7 +19,7 @@ public sealed class RestReleaseForm : Form
         MaximizeBox = false;
         AutoScaleDimensions = new SizeF(96F, 96F);
         AutoScaleMode = AutoScaleMode.Dpi;
-        ClientSize = new Size(500, 260);
+        ClientSize = new Size(500, 280);
         BackColor = Theme.Background;
         Padding = new Padding(26);
 
@@ -29,7 +29,7 @@ public sealed class RestReleaseForm : Form
             Font = Theme.Ui(16f, FontStyle.Bold),
             ForeColor = Theme.Text,
             Dock = DockStyle.Top,
-            Height = 38,
+            Height = 44,
             TextAlign = ContentAlignment.MiddleLeft
         };
 
@@ -37,11 +37,11 @@ public sealed class RestReleaseForm : Form
         {
             Text = $"本次工作已完成 {FormatDuration(worked)}。\n\n" +
                    "系统已经锁屏；解锁后必须手动确认才会开始新的工作周期。\n" +
-                   "如果现在不操作，程序会重新锁屏。",
+                   "不操作会自动重新锁屏。",
             Font = Theme.Ui(10f),
             ForeColor = Theme.Muted,
             Dock = DockStyle.Top,
-            Height = 92,
+            Height = 120,
             TextAlign = ContentAlignment.TopLeft
         };
 
@@ -51,14 +51,15 @@ public sealed class RestReleaseForm : Form
             Font = Theme.Ui(10f, FontStyle.Bold),
             ForeColor = Theme.Rest,
             Dock = DockStyle.Top,
-            Height = 28,
+            Height = 30,
+            Padding = new Padding(0, 4, 0, 0),
             TextAlign = ContentAlignment.MiddleLeft
         };
 
         var buttons = new FlowLayoutPanel
         {
             Dock = DockStyle.Bottom,
-            Height = 52,
+            Height = 60,
             FlowDirection = FlowDirection.RightToLeft,
             WrapContents = false,
             Padding = new Padding(0, 8, 0, 0)
@@ -126,11 +127,11 @@ public sealed class RestReleaseForm : Form
     protected override void OnShown(EventArgs e)
     {
         base.OnShown(e);
-        Theme.ApplyDesignSize(this, 500, 260);
+        Theme.ApplyDesignSize(this, 500, 280);
         var scale = DeviceDpi / 96f;
         if (scale > 1f)
         {
-            _buttonsPanel.Height = (int)Math.Round(52 * scale);
+            _buttonsPanel.Height = (int)Math.Round(60 * scale);
         }
 
         Activate();

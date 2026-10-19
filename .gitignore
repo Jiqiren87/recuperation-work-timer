@@ -7,10 +7,13 @@ TestResults/
 
 # Local toolchain and tools
 .dotnet/
+.preview/
 tools/gh/
 gh-login.log
 build.log
 test.log
+preview-build.log
+publish.log
 *.log
 
 # IDE
