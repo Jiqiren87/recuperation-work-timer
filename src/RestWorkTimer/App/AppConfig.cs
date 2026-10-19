@@ -13,6 +13,7 @@ public sealed class AppConfig
     public bool AutoStart { get; set; } = true;
     public bool SoundEnabled { get; set; } = true;
     public bool PopupEnabled { get; set; } = true;
+    public bool BreakThroughFullscreen { get; set; } = true;
     public bool LocalRecords { get; set; } = true;
     public int HistoryRetentionDays { get; set; } = 180;
 

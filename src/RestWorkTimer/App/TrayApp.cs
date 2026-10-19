@@ -30,7 +30,7 @@ public sealed class TrayApp : ApplicationContext
     private ToolStripMenuItem _restItem = null!;
     private ToolStripMenuItem _releaseItem = null!;
     private AppConfig _config;
-    private ReminderForm? _reminder;
+    private FullscreenReminderForm? _reminder;
     private RestReleaseForm? _restReleaseForm;
     private bool _restReleaseOpen;
     private bool _exiting;
@@ -502,7 +502,7 @@ public sealed class TrayApp : ApplicationContext
 
         if (_config.SoundEnabled)
         {
-            SystemSounds.Exclamation.Play();
+            AlertSound.Play(e.SecondsRemaining <= 30);
         }
 
         if (!_config.PopupEnabled)
@@ -515,9 +515,33 @@ public sealed class TrayApp : ApplicationContext
             _reminder.Close();
         }
 
-        _reminder = new ReminderForm(e.SecondsRemaining, playSound: false);
-        _reminder.FormClosed += (_, _) => _reminder = null;
-        _reminder.Show();
+        var forceForeground = _config.BreakThroughFullscreen
+                              && FullscreenDetector.IsExclusiveFullscreen();
+        AppLog.Info("reminder.display", new
+        {
+            secondsRemaining = e.SecondsRemaining,
+            forceForeground
+        });
+
+        try
+        {
+            _reminder = new FullscreenReminderForm(
+                e.SecondsRemaining,
+                autoCloseSeconds: e.SecondsRemaining <= 30 ? 12 : 10,
+                forceForeground);
+            _reminder.FormClosed += (_, _) =>
+            {
+                AppLog.Info("reminder.closed");
+                _reminder = null;
+            };
+            _reminder.Show();
+            AppLog.Info("reminder.shown", new { handle = _reminder.Handle });
+        }
+        catch (Exception ex)
+        {
+            AppLog.Error("reminder.show", ex);
+            _reminder = null;
+        }
     }
 
     private void OnRestDue(object? sender, EventArgs e)
