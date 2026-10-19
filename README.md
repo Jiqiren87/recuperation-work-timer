@@ -26,6 +26,22 @@ Windows 托盘工具：每次真正开始工作时启动 30 分钟倒计时，�
 - 不提升管理员权限；UAC 安全桌面、登录界面不收全局钩子。
 - 防休眠可能被电源策略/电池模式覆盖。
 
+## 安装
+
+从 Release 下载 `RestWorkTimer.exe`，或在本机执行：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\install.ps1
+```
+
+脚本会复制到 `%LOCALAPPDATA%\Programs\RestWorkTimer\`，创建开始菜单快捷方式并启动。卸载：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\uninstall.ps1
+```
+
+首次运行会创建 `%APPDATA%\RestWorkTimer\config.json`，并按设置写入 HKCU 开机自启项。
+
 ## 构建
 
 需要 .NET 8 SDK（或使用仓库内脚本安装到 `.dotnet/`）：
