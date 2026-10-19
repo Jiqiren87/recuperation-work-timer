@@ -530,15 +530,22 @@ public sealed class TrayApp : ApplicationContext
 
         UpdateUi();
 
-        if (_config.LockOnRest && !NativeMethods.LockWorkStation())
+        if (_config.LockOnRest)
         {
-            var error = new Win32Exception(Marshal.GetLastWin32Error());
-            AppLog.Error("lock.failed", error);
-            MessageBox.Show(_main,
-                "锁屏失败：" + error.Message + "\n\n程序会保持休息状态并继续防休眠，请手动按 Win+L 锁屏。",
-                "锁屏失败",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Warning);
+            if (NativeMethods.LockWorkStation())
+            {
+                AppLog.Info("lock.ok", new { source = "rest" });
+            }
+            else
+            {
+                var error = new Win32Exception(Marshal.GetLastWin32Error());
+                AppLog.Error("lock.failed", error);
+                MessageBox.Show(_main,
+                    "锁屏失败：" + error.Message + "\n\n程序会保持休息状态并继续防休眠，请手动按 Win+L 锁屏。",
+                    "锁屏失败",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
         }
     }
 
@@ -686,16 +693,19 @@ public sealed class TrayApp : ApplicationContext
             return;
         }
 
-        if (!NativeMethods.LockWorkStation())
+        if (NativeMethods.LockWorkStation())
         {
-            var error = new Win32Exception(Marshal.GetLastWin32Error());
-            AppLog.Error("lock.failed", error);
-            MessageBox.Show(_main,
-                "重新锁屏失败：" + error.Message + "\n\n请手动按 Win+L 锁屏。",
-                "锁屏失败",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Warning);
+            AppLog.Info("lock.ok", new { source = "relock" });
+            return;
         }
+
+        var error = new Win32Exception(Marshal.GetLastWin32Error());
+        AppLog.Error("lock.failed", error);
+        MessageBox.Show(_main,
+            "重新锁屏失败：" + error.Message + "\n\n请手动按 Win+L 锁屏。",
+            "锁屏失败",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Warning);
     }
 
     private void ApplyConfig(AppConfig config)
