@@ -76,6 +76,16 @@ public sealed class ConfigStoreTests
         Assert.Equal(new[] { 30 }, config.WarnSeconds);
     }
 
+    [Fact]
+    public void NullReminderListFallsBackToDefault()
+    {
+        var config = new AppConfig { WarnSeconds = null! };
+
+        config.Normalize();
+
+        Assert.Equal(new[] { 30 }, config.WarnSeconds);
+    }
+
     private static string CreateTempDirectory()
     {
         var path = Path.Combine(Path.GetTempPath(), "RestWorkTimerTests", Guid.NewGuid().ToString("N"));

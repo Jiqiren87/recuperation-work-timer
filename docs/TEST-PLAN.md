@@ -8,7 +8,7 @@
 .\.dotnet\dotnet.exe test RestWorkTimer.sln -c Debug
 ```
 
-当前覆盖（24 个用例）：
+当前覆盖（25 个用例）：
 
 | 区域 | 用例 |
 |---|---|
@@ -50,7 +50,7 @@ GitHub Actions 的 `ci` workflow 在 `windows-latest` 上执行 restore/build/te
 ## 3. 当前状态
 
 - [x] 代码编译通过
-- [x] 24 个单元测试通过（Debug / Release）
+- [x] 25 个单元测试通过（Debug / Release）
 - [x] GitHub Actions CI 通过
 - [x] 主窗口/托盘/设置/历史窗口可创建，150% DPI 布局已截图
 - [x] 输入钩子注册成功（日志 `inputHook=true`）

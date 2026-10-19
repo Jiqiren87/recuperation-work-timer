@@ -9,7 +9,7 @@
 
 | 项目 | 结果 |
 |---|---|
-| `dotnet test`（24 个用例） | 通过 |
+| `dotnet test`（25 个用例） | 通过 |
 | GitHub Actions `ci` | build / test / publish 通过 |
 | 发布单文件 exe | `artifacts/publish/RestWorkTimer.exe` 可启动 |
 

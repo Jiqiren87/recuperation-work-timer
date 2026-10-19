@@ -28,6 +28,7 @@ public sealed class AppConfig
     public void Normalize()
     {
         WorkMinutes = Math.Clamp(WorkMinutes, 1, 180);
+        WarnSeconds ??= new List<int>();
 
         var maxSeconds = WorkMinutes * 60 - 1;
         WarnSeconds = WarnSeconds
@@ -53,7 +54,7 @@ public sealed class AppConfig
     public AppConfig Clone()
     {
         var clone = (AppConfig)MemberwiseClone();
-        clone.WarnSeconds = WarnSeconds.ToList();
+        clone.WarnSeconds = (WarnSeconds ?? new List<int>()).ToList();
         return clone;
     }
 
