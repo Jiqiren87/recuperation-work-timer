@@ -21,6 +21,7 @@ public sealed class TimerEngine
     private Guid _sessionId;
     private long _startedTimestamp;
     private DateTimeOffset _startedAt;
+    private long _restStartedTimestamp;
     private DateTimeOffset? _restStartedAt;
     private CycleStartReason? _startReason;
 
@@ -317,6 +318,7 @@ public sealed class TimerEngine
         _startedTimestamp = _clock.Timestamp;
         _startedAt = _clock.Now;
         _restStartedAt = null;
+        _restStartedTimestamp = 0;
         _startReason = reason;
         _activeDuration = _configuredDuration;
         _activeReminders = _configuredReminders.ToArray();
@@ -354,6 +356,7 @@ public sealed class TimerEngine
 
         _state = isRest ? TimerState.Rest : TimerState.Idle;
         _restStartedAt = isRest ? endedAt : null;
+        _restStartedTimestamp = isRest ? _clock.Timestamp : 0;
         return result;
     }
 
@@ -366,7 +369,7 @@ public sealed class TimerEngine
 
         var endedAt = _clock.Now;
         var startedAt = _restStartedAt ?? endedAt;
-        var duration = endedAt - startedAt;
+        var duration = _clock.Elapsed(_restStartedTimestamp, _clock.Timestamp);
         if (duration < TimeSpan.Zero)
         {
             duration = TimeSpan.Zero;

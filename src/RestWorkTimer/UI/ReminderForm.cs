@@ -19,6 +19,7 @@ public sealed class ReminderForm : Form
         Size = new Size(380, 112);
         Padding = new Padding(18, 14, 18, 12);
         Cursor = Cursors.Hand;
+        AutoScaleDimensions = new SizeF(96F, 96F);
         AutoScaleMode = AutoScaleMode.Dpi;
 
         _title = new Label
@@ -81,6 +82,7 @@ public sealed class ReminderForm : Form
     protected override void OnShown(EventArgs e)
     {
         base.OnShown(e);
+        Theme.ApplyDesignSize(this, 380, 112);
         var area = Screen.PrimaryScreen?.WorkingArea ?? new Rectangle(0, 0, 1920, 1080);
         Location = new Point(area.Right - Width - 18, area.Bottom - Height - 18);
         _closeTimer.Start();

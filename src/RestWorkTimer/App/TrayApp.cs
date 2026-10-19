@@ -146,7 +146,12 @@ public sealed class TrayApp : ApplicationContext
             warnSeconds = _config.WarnSeconds,
             lockOnRest = _config.LockOnRest,
             inputHook = _input.IsRunning,
-            sessionMonitor = _session is not null
+            sessionMonitor = _session is not null,
+            mainWidth = _main.Width,
+            mainHeight = _main.Height,
+            mainClient = _main.ClientSize.ToString(),
+            deviceDpi = _main.DeviceDpi,
+            screen = Screen.PrimaryScreen?.Bounds.ToString()
         });
 
         if (!startHidden)
@@ -633,8 +638,15 @@ public sealed class TrayApp : ApplicationContext
 
             using var form = new RestReleaseForm(worked);
             _restReleaseForm = form;
-            var result = form.ShowDialog();
-            _restReleaseForm = null;
+            DialogResult result;
+            try
+            {
+                result = form.ShowDialog();
+            }
+            finally
+            {
+                _restReleaseForm = null;
+            }
 
             if (result == DialogResult.OK)
             {

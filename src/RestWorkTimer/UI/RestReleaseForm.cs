@@ -4,6 +4,7 @@ public sealed class RestReleaseForm : Form
 {
     private readonly Label _countdownLabel;
     private readonly System.Windows.Forms.Timer _countdownTimer;
+    private readonly FlowLayoutPanel _buttonsPanel;
     private int _secondsLeft = 15;
 
     public RestReleaseForm(TimeSpan worked)
@@ -16,6 +17,7 @@ public sealed class RestReleaseForm : Form
         ControlBox = false;
         MinimizeBox = false;
         MaximizeBox = false;
+        AutoScaleDimensions = new SizeF(96F, 96F);
         AutoScaleMode = AutoScaleMode.Dpi;
         ClientSize = new Size(500, 260);
         BackColor = Theme.Background;
@@ -61,6 +63,7 @@ public sealed class RestReleaseForm : Form
             WrapContents = false,
             Padding = new Padding(0, 8, 0, 0)
         };
+        _buttonsPanel = buttons;
 
         var release = new Button
         {
@@ -123,6 +126,13 @@ public sealed class RestReleaseForm : Form
     protected override void OnShown(EventArgs e)
     {
         base.OnShown(e);
+        Theme.ApplyDesignSize(this, 500, 260);
+        var scale = DeviceDpi / 96f;
+        if (scale > 1f)
+        {
+            _buttonsPanel.Height = (int)Math.Round(52 * scale);
+        }
+
         Activate();
         BringToFront();
         _countdownTimer.Start();

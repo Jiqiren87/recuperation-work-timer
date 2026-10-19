@@ -16,6 +16,7 @@ public sealed class HistoryForm : Form
         StartPosition = FormStartPosition.CenterParent;
         FormBorderStyle = FormBorderStyle.Sizable;
         MinimizeBox = false;
+        AutoScaleDimensions = new SizeF(96F, 96F);
         AutoScaleMode = AutoScaleMode.Dpi;
         ClientSize = new Size(980, 600);
         MinimumSize = new Size(760, 420);
@@ -115,7 +116,13 @@ public sealed class HistoryForm : Form
 
         Controls.Add(root);
         CancelButton = close;
-        Shown += (_, _) => LoadData();
+    }
+
+    protected override void OnShown(EventArgs e)
+    {
+        base.OnShown(e);
+        Theme.ApplyDesignSize(this, 980, 600);
+        LoadData();
     }
 
     private void AddColumn(string header, string property, int fillWeight)

@@ -22,6 +22,7 @@ public sealed class SettingsForm : Form
         ShowInTaskbar = false;
         MinimizeBox = false;
         MaximizeBox = false;
+        AutoScaleDimensions = new SizeF(96F, 96F);
         AutoScaleMode = AutoScaleMode.Dpi;
         ClientSize = new Size(600, 560);
         BackColor = Theme.Background;
@@ -179,6 +180,12 @@ public sealed class SettingsForm : Form
     }
 
     public AppConfig? SavedConfig { get; private set; }
+
+    protected override void OnShown(EventArgs e)
+    {
+        base.OnShown(e);
+        Theme.ApplyDesignSize(this, 600, 560);
+    }
 
     private static void AddRow(TableLayoutPanel root, string labelText, Control control, int row)
     {

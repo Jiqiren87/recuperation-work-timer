@@ -12,6 +12,7 @@ public sealed class MainForm : Form
     private readonly Button _resetButton;
     private readonly Button _restButton;
     private readonly Label _subtitleLabel;
+    private bool _dpiAdjusted;
 
     public MainForm(TrayApp app)
     {
@@ -21,6 +22,7 @@ public sealed class MainForm : Form
         FormBorderStyle = FormBorderStyle.FixedSingle;
         MaximizeBox = false;
         MinimizeBox = true;
+        AutoScaleDimensions = new SizeF(96F, 96F);
         AutoScaleMode = AutoScaleMode.Dpi;
         ClientSize = new Size(620, 470);
         BackColor = Theme.Background;
@@ -43,31 +45,43 @@ public sealed class MainForm : Form
             ColumnCount = 1,
             RowCount = 5
         };
-        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 58));
+        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 72));
         root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 58));
+        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 62));
         root.RowStyles.Add(new RowStyle(SizeType.Absolute, 48));
         root.RowStyles.Add(new RowStyle(SizeType.Absolute, 30));
 
-        var header = new Panel { Dock = DockStyle.Fill, BackColor = Theme.Background };
+        var header = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            BackColor = Theme.Background,
+            ColumnCount = 1,
+            RowCount = 2,
+            Margin = new Padding(0)
+        };
+        header.RowStyles.Add(new RowStyle(SizeType.Absolute, 42));
+        header.RowStyles.Add(new RowStyle(SizeType.Absolute, 26));
+
         var title = new Label
         {
             Text = "休养期间工作计时提醒期",
             Font = Theme.Ui(16f, FontStyle.Bold),
             ForeColor = Theme.Text,
-            AutoSize = true,
-            Location = new Point(0, 2)
+            Dock = DockStyle.Fill,
+            TextAlign = ContentAlignment.MiddleLeft,
+            AutoSize = false
         };
         _subtitleLabel = new Label
         {
             Text = "工作时长 30 分钟 · 60 / 30 秒提醒",
             Font = Theme.Ui(9f),
             ForeColor = Theme.Muted,
-            AutoSize = true,
-            Location = new Point(1, 32)
+            Dock = DockStyle.Fill,
+            TextAlign = ContentAlignment.TopLeft,
+            AutoSize = false
         };
-        header.Controls.Add(title);
-        header.Controls.Add(_subtitleLabel);
+        header.Controls.Add(title, 0, 0);
+        header.Controls.Add(_subtitleLabel, 0, 1);
 
         var card = new Panel
         {
@@ -194,7 +208,7 @@ public sealed class MainForm : Form
                 break;
 
             default:
-                _timeLabel.Text = "--:--";
+                _timeLabel.Text = FormatRemaining(_app.Config.WorkDuration);
                 _timeLabel.ForeColor = Theme.Idle;
                 _stateLabel.Text = "待开始 · 敲击键鼠开始计时";
                 _resetButton.Text = "开始计时";
@@ -216,6 +230,18 @@ public sealed class MainForm : Form
         }
 
         base.OnFormClosing(e);
+    }
+
+    protected override void OnShown(EventArgs e)
+    {
+        base.OnShown(e);
+        if (_dpiAdjusted)
+        {
+            return;
+        }
+
+        _dpiAdjusted = true;
+        Theme.ApplyDesignSize(this, 620, 470);
     }
 
     private static string FormatRemaining(TimeSpan remaining)
