@@ -527,7 +527,7 @@ public sealed class TrayApp : ApplicationContext
         {
             _reminder = new FullscreenReminderForm(
                 e.SecondsRemaining,
-                autoCloseSeconds: e.SecondsRemaining <= 30 ? 12 : 10,
+                autoCloseSeconds: 4,
                 forceForeground);
             _reminder.FormClosed += (_, _) =>
             {
