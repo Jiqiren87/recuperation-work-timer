@@ -1,8 +1,12 @@
 # 休养期间工作计时提醒期
 
+[![ci](https://github.com/Jiqiren87/recuperation-work-timer/actions/workflows/ci.yml/badge.svg)](https://github.com/Jiqiren87/recuperation-work-timer/actions/workflows/ci.yml)
+
 Windows 托盘工具：每次真正开始工作时启动 30 分钟倒计时，提前 60 秒 / 30 秒提醒，归零后锁屏进入休息；休息期间不结束后台自动化，并阻止系统空闲睡眠。解锁后必须手动确认才解除休息。
 
-> 开发中。当前仓库处于 M0/M1 阶段，功能和验收记录会持续更新。
+> 状态：M0–M2 代码完成，24 个单元测试与 CI 通过；v0.1.0 待完成真实锁屏/解锁验收。
+
+![主窗口](docs/images/main.png)
 
 ## 核心行为
 
@@ -17,7 +21,7 @@ Windows 托盘工具：每次真正开始工作时启动 30 分钟倒计时，�
 
 ## 限制
 
-- 真正的系统锁屏会阻断依赖桌面窗口/GUI 点击的自动化；本项目按“后台自动化”场景设计。若自动化必须操作桌面，需要改 `overlay` 模式或把自动化放到独立会话。
+- 真正的系统锁屏会阻断依赖桌面窗口/GUI 点击的自动化；本项目按“后台自动化”场景设计。`overlay` 模式尚未实现，GUI 自动化建议放到独立会话或服务中。
 - 硬件级 KVM/Arduino 模拟键鼠、部分驱动宏不带 injected 标志，无法与真人输入区分。
 - 不提升管理员权限；UAC 安全桌面、登录界面不收全局钩子。
 - 防休眠可能被电源策略/电池模式覆盖。
@@ -57,4 +61,6 @@ dotnet run --project src\RestWorkTimer
 - 仓库：<https://github.com/Jiqiren87/recuperation-work-timer>
 - 方案：[docs/DEVELOPMENT-PLAN.md](docs/DEVELOPMENT-PLAN.md)
 - 测试计划：[docs/TEST-PLAN.md](docs/TEST-PLAN.md)
+- 验收记录：[docs/ACCEPTANCE.md](docs/ACCEPTANCE.md)
 - CI：GitHub Actions `ci` workflow（Windows，build + test + publish）
+- 版本：v0.1.0（锁屏/解锁真机验收完成后发布）

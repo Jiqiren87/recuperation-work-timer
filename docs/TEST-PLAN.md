@@ -50,14 +50,20 @@ GitHub Actions 的 `ci` workflow 在 `windows-latest` 上执行 restore/build/te
 ## 3. 当前状态
 
 - [x] 代码编译通过
-- [x] 24 个单元测试通过
-- [x] 主窗口/托盘/设置/历史窗口可创建
+- [x] 24 个单元测试通过（Debug / Release）
+- [x] GitHub Actions CI 通过
+- [x] 主窗口/托盘/设置/历史窗口可创建，150% DPI 布局已截图
 - [x] 输入钩子注册成功（日志 `inputHook=true`）
 - [x] 会话/电源通知注册成功（日志 `sessionMonitor=true`）
-- [ ] 2 分钟手工周期提醒截图（需要解锁桌面）
-- [ ] 锁屏/解锁/睡眠/休眠真机回归
+- [x] 2 分钟周期：01:00、00:30 提醒；00:00 进入 Rest（`lockOnRest=false` 测试）
+- [x] 本地 work 记录写入 JSONL
+- [ ] 真实锁屏/解锁/休息确认框（需要解锁桌面）
+- [ ] `powercfg /requests` 防休眠（需要管理员）
 - [ ] 注入输入真机验证（需要解锁桌面）
+- [ ] 睡眠/休眠回归
 - [ ] 开机自启回归
+
+截图与日志时间点见 [ACCEPTANCE.md](ACCEPTANCE.md)。
 
 ## 4. 测试限制
 
