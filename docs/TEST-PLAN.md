@@ -30,7 +30,7 @@ GitHub Actions 的 `ci` workflow 在 `windows-latest` 上执行 restore/build/te
 | 冷启动 | 退出程序 → 重新运行 | 托盘出现，主窗口显示“待开始” |
 | 首次真人输入 | 在 Idle 状态按一次物理键盘/鼠标 | 从完整时长开始，托盘显示倒计时 |
 | 60 秒提醒 | 设为 2 分钟，等到 1:00 | 弹窗 + 声音各一次，8 秒后消失 |
-| 30 秒提醒 | 等到 0:30 | 弹窗 + 声音各一次 |
+| 30 秒提醒 | 等到 0:30 | 全屏置顶提醒 + 提示音；全屏游戏时最小化后可见 |
 | 归零锁屏 | 等到 0:00 | 调用 Windows 锁屏，Rest 状态 |
 | 防休眠 | Rest 中运行 `powercfg /requests` | 有本程序的 SYSTEM 请求 |
 | 自动化存活 | Rest 中查看后台自动化日志/PID | 进程未结束，后台任务继续 |
@@ -63,6 +63,7 @@ GitHub Actions 的 `ci` workflow 在 `windows-latest` 上执行 restore/build/te
 - [x] 睡眠/恢复（观察到锁屏 + suspend/resume，解锁后 Idle）
 - [x] 开机自启注册
 - [x] 单实例
+- [x] v0.1.1 全屏提醒：全屏游戏上显示，`forceForeground=true`，窗口被最小化后提醒可见
 - [ ] `powercfg /requests` 防休眠（需要管理员，未执行）
 - [ ] “继续休息（立即锁屏）”单独回归
 - [ ] 纯 Working→睡眠（未先锁屏）隔离回归

@@ -9,6 +9,7 @@ public sealed class SettingsForm : Form
     private readonly CheckBox _warn30;
     private readonly CheckBox _sound;
     private readonly CheckBox _popup;
+    private readonly CheckBox _breakThrough;
     private readonly CheckBox _lock;
     private readonly CheckBox _keepAwake;
     private readonly CheckBox _autoStart;
@@ -96,11 +97,30 @@ public sealed class SettingsForm : Form
 
         _popup = new CheckBox
         {
-            Text = "显示右下角弹窗",
+            Text = "显示全屏置顶提醒（覆盖全屏应用）",
             Checked = current.PopupEnabled,
             AutoSize = true
         };
-        AddRow(root, string.Empty, _popup, 5);
+
+        _breakThrough = new CheckBox
+        {
+            Text = "全屏应用时强制切出以显示提醒",
+            Checked = current.BreakThroughFullscreen,
+            AutoSize = true
+        };
+
+        var popupPanel = new FlowLayoutPanel
+        {
+            FlowDirection = FlowDirection.TopDown,
+            WrapContents = false,
+            AutoSize = true,
+            Dock = DockStyle.Fill,
+            BackColor = Color.Transparent
+        };
+        popupPanel.Controls.Add(_popup);
+        popupPanel.Controls.Add(_breakThrough);
+        AddRow(root, string.Empty, popupPanel, 5);
+        root.RowStyles[5].Height = 64;
 
         _lock = new CheckBox
         {
@@ -238,6 +258,7 @@ public sealed class SettingsForm : Form
             WarnSeconds = new List<int>(),
             SoundEnabled = _sound.Checked,
             PopupEnabled = _popup.Checked,
+            BreakThroughFullscreen = _breakThrough.Checked,
             LockOnRest = _lock.Checked,
             KeepAwakeDuringRest = _keepAwake.Checked,
             AutoStart = _autoStart.Checked,
